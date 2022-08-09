@@ -241,7 +241,7 @@ function employeeTrack () {
                 });
             })
         }
-        }   else if (response.prompt === 'Log out') {
+        }   else if (response.prompt === 'Quit') {
             db.end();
             console.log('You have logged out');
         }
