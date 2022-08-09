@@ -32,7 +32,7 @@ function employeeTrack () {
                 console.table(result);
                 employeeTrack();
             });
-        } else if (response.prompt === 'View Emplyees') {
+        } else if (response.prompt === 'View Employees') {
             db.query(`SELECT * FROM employee`, (err, result) => {
                 if (err) throw err;
                 console.log('You are now viewing all employees');
@@ -176,7 +176,74 @@ function employeeTrack () {
                         }
                     }
                 ])
+                .then((response) => {
+                    for (var i = 0; i < result.length; i++) {
+                        if (result[i].title === response.role) {
+                            var role = result[i];
+                        }
+                    } 
+
+                    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)`, [response.firstName, response.lastName, role.id, response.manager.id], (err, result) => {
+                        console.log(`${response.firstName} ${response.lastName} was added successfully!`);
+                        employeeTrack();
+                    });
+                })
+            });
+        } else if ( response.prompt === 'Update an Employees role') {
+            db.query(`SELECT * FROM employee, role`), (err, result) => {
+                if (err) throw err;
+
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'employee',
+                        message: 'Select which employees role you want to change',
+                        choices: () => {
+                            var array = [];
+                            for (var i = 0; i < result.length; i++) {
+                                array.push(result[i].last_name);
+                            } 
+                            var employeeArray = [...new Set(array)];
+                            return employeeArray;
+                        }
+                    },
+                    {
+                        type: 'list',
+                        name: 'role',
+                        message: 'Select their new role',
+                        choices: () => {
+                            var array = [];
+                            for (var i = 0; i < result.length; i++) {
+                                array.push(result[i].title);
+                            } 
+                            var updatedArray = [...new Set(array)];
+                            return updatedArray;
+                        }
+                    }
+                ])
+                .then((response) => {
+                    for (var i = 0; i < result.length; i++) {
+                    if (result[i].last_name === response.employee) {
+                        var name = result[i];
+                    }    
+                }
+
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i].title === response.role) {
+                        var role = result[i];
+                    } 
+                }
+
+                db.query(`UPDATE employee SET ? WHERE ?`, [{role_id: role}, {last_name: name}], (err, result) => {
+                    if (err) throw err;
+                    console.log(`${response.employee} role was updated successfully`);
+                    employeeTrack();
+                });
             })
         }
-    })
+        }   else if (response.prompt === 'Log out') {
+            db.end();
+            console.log('You have logged out');
+        }
+    });
 }

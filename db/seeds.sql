@@ -20,4 +20,4 @@ VALUES
 ('Kanye', 'West', 1, 3),
 ('Bob', 'Marley', 2, 1),
 ('Adam', 'Levine', 3, 5),
-('Katy', 'Perry', 4, 4),
+('Katy', 'Perry', 4, 2);
